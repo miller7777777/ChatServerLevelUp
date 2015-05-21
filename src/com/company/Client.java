@@ -16,15 +16,21 @@ public class Client extends Thread{
     private ChatServer server;
     private BufferedReader reader;
     private PrintWriter writer;
-    private String login;
+    public String login;
 
-    public Client(Socket sock, ChatServer server) throws IOException{
+    public Client(Socket sock, ChatServer server) throws IOException {
 
         this.server = server;
         this.sock = sock;
         reader = new BufferedReader(new InputStreamReader(sock.getInputStream()));
         writer = new PrintWriter(sock.getOutputStream());
+//        sleep(2000);
+//        Не помогло.
+        writer.println("Input login: ");
+        System.out.println("Query login from new client");
+
 //        this.login = login;
+//        setDaemon(true);
         start();
     }
 
@@ -32,11 +38,20 @@ public class Client extends Thread{
     @Override
     public void run() {
 
+//        writer.println("Input login: ");
+        /*
+        Получается какая-то фигня. Сервер ждет чего-то от  клиента, пока клиент не введет что-то - он не получит приглашения от сервера ввести логин. Введенное ПЕРЕД приглашением что-то и будет логином.
+
+        Оставим пока.
+         */
+
         try {
             login = reader.readLine();
         } catch (IOException e) {
             e.printStackTrace();
         }
+        writer.println("Login " + login + " accepted.");
+        System.out.println("New`s client login is: " + login);
 //        super.run();
         while (true){
             try {
@@ -49,7 +64,7 @@ public class Client extends Thread{
                         sock.close();
                         break;
                     }
-                    server.notifyAllClients(message);
+                    server.notifyAllClients(login + ": " + message);
                 }
             } catch (IOException e) {
                 e.printStackTrace();
