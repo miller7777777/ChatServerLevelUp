@@ -47,6 +47,7 @@ public class Client extends Thread{
 
         try {
             login = reader.readLine();
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -64,7 +65,11 @@ public class Client extends Thread{
                         sock.close();
                         break;
                     }
-                    server.notifyAllClients(login + ": " + message);
+                    if (message.startsWith("@")){
+                        server.notifyConcretClients(login, message);
+                    }else {
+                        server.notifyAllClients(login + ": " + message);
+                    }
                 }
             } catch (IOException e) {
                 e.printStackTrace();

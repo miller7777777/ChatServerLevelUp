@@ -13,11 +13,12 @@ public class ChatServer {
 
     private static final int PORT = 7000;
     private ServerSocket serverSocket;
-    ArrayList<Client> clients;
+    public ArrayList<Client> clients;
 
     public void acceptClients(){
 
         clients = new ArrayList<Client>();
+
 
         try {
             serverSocket = new ServerSocket(PORT);
@@ -48,9 +49,39 @@ public class ChatServer {
 
     public void removeClient(Client c){
         if (clients.remove(c)){
-            System.out.println("Clent has disconnected.");
+            System.out.println("Clent " + c.login + " has disconnected.");
         }
     }
 
 
+    public void notifyConcretClients(String login, String message) {
+
+
+
+        String[] data = message.split(":");
+
+//        for (int i = 0; i < data.length; i++) {
+//
+//            System.out.println(data[i]);
+//
+//        }
+
+        int atDog = message.indexOf("@");
+        int doubleDot = message.indexOf(":");
+        String adresatName = message.substring(atDog + 1, doubleDot);
+        String messageToAdresat = message.substring(doubleDot + 1);
+
+//        System.out.println("adresatName: " + adresatName);
+//        System.out.println("message: " + messageToAdresat);
+
+        for (int i = 0; i < clients.size(); i++) {
+
+            if (clients.get(i).login.equals(adresatName)) {
+
+                clients.get(i).send(login + " (privat): " + messageToAdresat);
+
+            }
+
+        }
+    }
 }
